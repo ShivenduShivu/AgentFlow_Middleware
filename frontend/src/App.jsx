@@ -2,8 +2,16 @@ import "./App.css";
 import { useState } from "react";
 
 export default function App() {
-  const workflow = ["support", "policy", "finance"];
+  const [workflowInput, setWorkflowInput] = useState(
+    "support,policy,finance"
+  );
+  const [requestInput, setRequestInput] = useState("refund");
   const [trace, setTrace] = useState([]);
+
+  const workflow = workflowInput
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   async function runWorkflow() {
     const response = await fetch("http://127.0.0.1:8000/run-workflow", {
@@ -13,7 +21,7 @@ export default function App() {
       },
       body: JSON.stringify({
         workflow: workflow,
-        input: { request: "refund" },
+        input: { request: requestInput },
       }),
     });
 
@@ -32,9 +40,23 @@ export default function App() {
         <div className="panel workflow">
           <h2>Workflow Builder</h2>
 
+          <label>Agents (comma separated)</label>
+          <input
+            className="text-input"
+            value={workflowInput}
+            onChange={(e) => setWorkflowInput(e.target.value)}
+          />
+
+          <label>Request</label>
+          <input
+            className="text-input"
+            value={requestInput}
+            onChange={(e) => setRequestInput(e.target.value)}
+          />
+
           <div className="workflow-diagram">
             {workflow.map((agent, index) => (
-              <div key={agent} className="workflow-step">
+              <div key={agent + index} className="workflow-step">
                 <div className="agent-box">{agent}</div>
                 {index < workflow.length - 1 && (
                   <div className="arrow">→</div>
@@ -50,14 +72,20 @@ export default function App() {
 
         {/* Trace Panel */}
         <div className="panel trace">
-          <h2>Trace Panel</h2>
+          <h2>Execution Trace</h2>
+
+          {trace.length === 0 && (
+            <div className="trace-empty">
+              Run workflow to see execution trace
+            </div>
+          )}
 
           <div className="trace-list">
-            {trace.map((step) => {
+            {trace.map((step, i) => {
               const value = Object.values(step.output)[0];
 
               return (
-                <div key={step.agent} className="trace-item">
+                <div key={i} className="trace-item">
                   <span className="trace-agent">{step.agent}</span>
                   <span className="trace-arrow">→</span>
                   <span className="trace-value">{value}</span>

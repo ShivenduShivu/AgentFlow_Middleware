@@ -110,3 +110,19 @@ body {
 .run-btn:hover {
   background: #15803d;
 }
+
+.text-input {
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+.trace-empty {
+  margin-top: 16px;
+  color: #64748b;
+  font-size: 14px;
+}
