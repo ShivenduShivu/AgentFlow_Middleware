@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.agents.registry import registry
 from app.agents.base import Agent
+from app.orchestrator.workflow import orchestrator
 
 app = FastAPI(title="AgentFlow Backend")
 
@@ -8,20 +9,20 @@ app = FastAPI(title="AgentFlow Backend")
 # --- Demo Agents ---
 class SupportAgent(Agent):
     def execute(self, data: dict) -> dict:
-        return {"status": "support_checked"}
+        return {"support": "approved"}
 
 
 class PolicyAgent(Agent):
     def execute(self, data: dict) -> dict:
-        return {"status": "policy_checked"}
+        return {"policy": "validated"}
 
 
 class FinanceAgent(Agent):
     def execute(self, data: dict) -> dict:
-        return {"status": "finance_checked"}
+        return {"finance": "processed"}
 
 
-# Register agents at startup
+# Register agents
 registry.register(SupportAgent("support"))
 registry.register(PolicyAgent("policy"))
 registry.register(FinanceAgent("finance"))
@@ -35,3 +36,14 @@ def read_root():
 @app.get("/agents")
 def list_agents():
     return registry.list_agents()
+
+
+# --- Workflow demo ---
+@app.get("/run-workflow")
+def run_workflow():
+    workflow = ["support", "policy", "finance"]
+    input_data = {"request": "refund"}
+
+    result = orchestrator.run(workflow, input_data)
+
+    return result
