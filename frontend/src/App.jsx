@@ -1,14 +1,25 @@
 import "./App.css";
+import { useState } from "react";
 
 export default function App() {
   const workflow = ["support", "policy", "finance"];
+  const [trace, setTrace] = useState([]);
 
-  // demo trace (matches backend format)
-  const trace = [
-    { agent: "support", output: { support: "approved" } },
-    { agent: "policy", output: { policy: "validated" } },
-    { agent: "finance", output: { finance: "processed" } }
-  ];
+  async function runWorkflow() {
+    const response = await fetch("http://127.0.0.1:8000/run-workflow", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        workflow: workflow,
+        input: { request: "refund" },
+      }),
+    });
+
+    const data = await response.json();
+    setTrace(data.trace);
+  }
 
   return (
     <div className="app">
@@ -31,6 +42,10 @@ export default function App() {
               </div>
             ))}
           </div>
+
+          <button className="run-btn" onClick={runWorkflow}>
+            Run Workflow
+          </button>
         </div>
 
         {/* Trace Panel */}

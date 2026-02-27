@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
 
@@ -9,6 +9,14 @@ from app.orchestrator.workflow import orchestrator
 from app.trace.store import trace_store
 
 app = FastAPI(title="AgentFlow Backend")
+
+# --- CORS ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ---------- Request Model ----------
@@ -37,11 +45,6 @@ class FinanceAgent(Agent):
 registry.register(SupportAgent("support"))
 registry.register(PolicyAgent("policy"))
 registry.register(FinanceAgent("finance"))
-
-
-@app.get("/")
-def serve_ui():
-    return FileResponse("app/ui/index.html")
 
 
 @app.get("/agents")
