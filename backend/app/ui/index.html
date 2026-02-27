@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AgentFlow Test UI</title>
+</head>
+<body>
+    <h2>AgentFlow Workflow Tester</h2>
+
+    <label>Workflow (comma separated):</label><br>
+    <input id="workflow" value="support,policy,finance" size="40"><br><br>
+
+    <label>Request:</label><br>
+    <input id="request" value="refund" size="40"><br><br>
+
+    <button onclick="runWorkflow()">Run Workflow</button>
+
+    <h3>Result</h3>
+    <pre id="result"></pre>
+
+    <h3>Trace</h3>
+    <pre id="trace"></pre>
+
+<script>
+async function runWorkflow() {
+    const workflowInput = document.getElementById("workflow").value;
+    const requestInput = document.getElementById("request").value;
+
+    const workflow = workflowInput.split(",").map(s => s.trim());
+
+    const response = await fetch("/run-workflow", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            workflow: workflow,
+            input: { request: requestInput }
+        })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("result").textContent =
+        JSON.stringify(data.result, null, 2);
+
+    document.getElementById("trace").textContent =
+        JSON.stringify(data.trace, null, 2);
+}
+</script>
+</body>
+</html>

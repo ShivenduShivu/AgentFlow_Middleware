@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Dict
 
@@ -39,8 +40,8 @@ registry.register(FinanceAgent("finance"))
 
 
 @app.get("/")
-def read_root():
-    return {"message": "AgentFlow backend is running"}
+def serve_ui():
+    return FileResponse("app/ui/index.html")
 
 
 @app.get("/agents")
@@ -48,7 +49,6 @@ def list_agents():
     return registry.list_agents()
 
 
-# ---------- NEW: Run workflow via API ----------
 @app.post("/run-workflow")
 def run_workflow(req: WorkflowRequest):
     result = orchestrator.run(req.workflow, req.input)
