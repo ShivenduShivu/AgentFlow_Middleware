@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import List, Dict
+
 from app.agents.registry import registry
 from app.agents.base import Agent
 from app.orchestrator.workflow import orchestrator
@@ -7,7 +10,13 @@ from app.trace.store import trace_store
 app = FastAPI(title="AgentFlow Backend")
 
 
-# --- Demo Agents ---
+# ---------- Request Model ----------
+class WorkflowRequest(BaseModel):
+    workflow: List[str]
+    input: Dict
+
+
+# ---------- Demo Agents ----------
 class SupportAgent(Agent):
     def execute(self, data: dict) -> dict:
         return {"support": "approved"}
@@ -39,17 +48,13 @@ def list_agents():
     return registry.list_agents()
 
 
-@app.get("/run-workflow")
-def run_workflow():
-    workflow = ["support", "policy", "finance"]
-    input_data = {"request": "refund"}
+# ---------- NEW: Run workflow via API ----------
+@app.post("/run-workflow")
+def run_workflow(req: WorkflowRequest):
+    result = orchestrator.run(req.workflow, req.input)
+    trace = trace_store.get_trace()
 
-    result = orchestrator.run(workflow, input_data)
-
-    return result
-
-
-# --- NEW: execution trace ---
-@app.get("/trace")
-def get_trace():
-    return trace_store.get_trace()
+    return {
+        "result": result,
+        "trace": trace
+    }
