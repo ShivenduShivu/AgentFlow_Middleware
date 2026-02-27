@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.agents.registry import registry
 from app.agents.base import Agent
 from app.orchestrator.workflow import orchestrator
+from app.trace.store import trace_store
 
 app = FastAPI(title="AgentFlow Backend")
 
@@ -38,7 +39,6 @@ def list_agents():
     return registry.list_agents()
 
 
-# --- Workflow demo ---
 @app.get("/run-workflow")
 def run_workflow():
     workflow = ["support", "policy", "finance"]
@@ -47,3 +47,9 @@ def run_workflow():
     result = orchestrator.run(workflow, input_data)
 
     return result
+
+
+# --- NEW: execution trace ---
+@app.get("/trace")
+def get_trace():
+    return trace_store.get_trace()
