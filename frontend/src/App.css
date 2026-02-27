@@ -63,3 +63,35 @@ body {
   font-size: 18px;
   color: #475569;
 }
+
+.trace-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trace-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.trace-agent {
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #1e293b;
+}
+
+.trace-arrow {
+  color: #64748b;
+}
+
+.trace-value {
+  color: #2563eb;
+  font-weight: 600;
+}
