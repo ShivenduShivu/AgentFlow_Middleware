@@ -35,3 +35,31 @@ body {
 .panel h2 {
   margin-top: 0;
 }
+
+.workflow-diagram {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.workflow-step {
+  display: flex;
+  align-items: center;
+}
+
+.agent-box {
+  background: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.arrow {
+  margin: 0 8px;
+  font-size: 18px;
+  color: #475569;
+}
